@@ -55,7 +55,6 @@ def PostLista():
     return render_template('post_lista.html', posts=posts)
 
 @app.route('/post/<int:id>/', methods=['GET', 'POST'])
-@login_required
 def PostDetail(id):
     posts = Post.query.get(id)
     form = PostComentarioForm()

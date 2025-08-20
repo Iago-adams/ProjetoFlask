@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
-from app import db, bcrypt
+from app import db, bcrypt, app
 from app.models import Contato, User, Post, PostComentarios
 import os
 from werkzeug.utils import secure_filename
@@ -74,8 +74,20 @@ class PostForm(FlaskForm):
         nome_seguro = secure_filename(imagem.filename)
         post = Post(
             mensagem = self.mensagem.data,
-            user_id = user_id
+            user_id = user_id,
+            imagem=nome_seguro
         )
+        
+        caminho = os.path.join(
+            #pegar a pasta que está nosso projeto
+            os.path.abspath(os.path.dirname(__file__)),
+            #definir a pasta que configuramos para UPLOAD
+            app.config['UPLOAD_FILES'],
+            #a pasta que esta os POST
+            'post',
+            nome_seguro
+        )
+        imagem.save(caminho)
         db.session.add(post)
         db.session.commit()
         
